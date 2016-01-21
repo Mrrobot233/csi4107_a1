@@ -1,0 +1,38 @@
+{
+  "name": "csi4107_a1",
+  "version": "1.0.0",
+  "description": "Assignment 1 for CSI4107 in JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morinted/csi4107_a1.git"
+  },
+  "keywords": [
+    "search",
+    "queries",
+    "assignment",
+    "uottawa",
+    "university",
+    "ottawa"
+  ],
+  "author": "Ted Morin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/morinted/csi4107_a1/issues"
+  },
+  "homepage": "https://github.com/morinted/csi4107_a1#readme",
+  "devDependencies": {
+    "babel-cli": "^6.4.5",
+    "babel-eslint": "^5.0.0-beta6",
+    "babel-polyfill": "^6.3.14",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "eslint": "^1.10.3",
+    "eslint-plugin-babel": "^3.0.0",
+    "xml2js": "^0.4.16"
+  }
+}
