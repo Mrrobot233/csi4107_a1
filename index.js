@@ -4,7 +4,7 @@ import { parseString } from 'xml2js'
 // All queries in XML
 const xmlQueries =
   fs.readFileSync('./assets/queries.txt', 'utf8')
-    .split(/[\r\n]{2}/g)
+    .split(/(\r\n|\n){2}/g)
 
 // Array of stop words (strings)
 const stopWords =
