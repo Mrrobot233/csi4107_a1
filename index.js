@@ -7,9 +7,12 @@ const xmlQueries =
     .split(/(\r\n|\n){2}/g)
 
 // Array of stop words (strings)
-const stopWords =
-  fs.readFileSync('./assets/stopwords.txt', 'utf8')
-    .split('\n')
+// const stopWords =
+//   fs.readFileSync('./assets/stopwords.txt', 'utf8')
+//     .split('\n')
+
+//test array of stopwords
+const stopWords = ['and', 'of']
 
 // Array of { time: num ms, tweet: 'string' }
 const tweets =
@@ -43,7 +46,20 @@ async function main () {
         }
       )
     )
-  console.log(JSON.stringify(queries, null, 2))
+  //queries with stop words removed (SWR)
+  const querySWR = queries
+    .map(({ num, title, time, tweetTime }) => (
+      // Get rid of spacing for all the properties
+      { num: num
+      , title: title.split(' ').filter(
+        word => stopWords.indexOf(word) <= -1)
+      , time: time
+      , tweetTime: tweetTime
+      }
+    )
+  )
+  // console.log(JSON.stringify(queries, null, 2))
+  console.log(JSON.stringify(querySWR, null, 2))
   // Now we have:
   // array of stop words: stopWords
   // array of tweets: tweets (tweets[0].time, tweets[0].tweet)
