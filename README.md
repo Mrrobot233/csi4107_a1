@@ -8,8 +8,13 @@ The data is found in `assets/`
 git clone https://github.com/morinted/csi4107_a1.git
 cd csi4107_a1
 npm install
-npm start
+npm run index
+npm run rank
 ```
+
+**Index** reads through the given assignment attachments, then creates the inverse index, and writes a few files for consumption.
+
+**Rank** takes the reverse index, tweets, and queries, then performs all the searches, and writes the output to the TREC file.
 
 ## ESLint
 
