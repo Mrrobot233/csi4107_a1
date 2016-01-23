@@ -7,12 +7,9 @@ const xmlQueries =
     .split(/(\r\n|\n){2}/g)
 
 // Array of stop words (strings)
-// const stopWords =
-//   fs.readFileSync('./assets/stopwords.txt', 'utf8')
-//     .split('\n')
-
-//test array of stopwords
-const stopWords = ['and', 'of']
+const stopWords =
+  fs.readFileSync('./assets/stopwords.txt', 'utf8')
+    .split('\n')
 
 // Array of { time: num ms, tweet: 'string' }
 const tweets =
@@ -20,6 +17,10 @@ const tweets =
     .split('\n')
     .map(tweet => tweet.split('\t'))
     .map(([ time, tweet ]) => ({ time, tweet }))
+    .filter(tweet => tweet.tweet)
+
+console.info(`Loaded ${tweets.length} tweets, ${stopWords.length} stop words,
+              and ${xmlQueries.length} lines in the queries file.`)
 
 // Do everything in here:
 async function main () {
@@ -33,37 +34,63 @@ async function main () {
         })
       }))
     )
+
+  const filterSentence = sentence => sentence.trim()
+      .replace(/[^a-zA-Z ]/g, '').toLowerCase()
+      .split(' ')
+      .filter(word => word && stopWords.indexOf(word) < 0)
+
+  console.info('Processing queries from XML to JSON, removing stop words…')
   const queries =
     (await Promise.all(queryPromises)) // parsing...
       .filter(x => x) // gets rid of null entries
       .map(x => x.top) // remove the <top> tag
       .map(({ num, title, querytime, querytweettime }) => (
-        // Get rid of spacing for all the properties
-        { num: num[0].trim().substring(8) // MB048
-        , title: title[0].trim()
-        , time: querytime[0].trim()
-        , tweetTime: querytweettime[0].trim()
-        }
+          // Get rid of spacing for all the properties
+          { num: parseInt(num[0].trim().substring(10), 10) // MB048
+          , tokens: filterSentence(title[0])
+          , time: querytime[0].trim()
+          , tweetTime: querytweettime[0].trim()
+          }
+        )
       )
-    )
-  //queries with stop words removed (SWR)
-  const querySWR = queries
-    .map(({ num, title, time, tweetTime }) => (
-      // Get rid of spacing for all the properties
-      { num: num
-      , title: title.split(' ').filter(
-        word => stopWords.indexOf(word) <= -1)
-      , time: time
-      , tweetTime: tweetTime
+
+  console.info(`There are ${queries.length} valid queries.`)
+
+  console.info('Filtering stop words from tweets…')
+  const filteredTweets =
+    tweets.map(({ time, tweet }) => (
+      { time
+      , tweet: filterSentence(tweet)
       }
-    )
-  )
-  // console.log(JSON.stringify(queries, null, 2))
-  console.log(JSON.stringify(querySWR, null, 2))
-  // Now we have:
-  // array of stop words: stopWords
-  // array of tweets: tweets (tweets[0].time, tweets[0].tweet)
-  // array of queries: queries (queries[0].num, title, time, tweetTime)
+    ))
+  console.info('Building index for tweet vocabulary…')
+  const tokens =
+    filteredTweets.reduce((index, { time, tweet }) => {
+      tweet.forEach(word => {
+        if (!index[word]) {
+          index[word] = { [time]: 1 }
+        } else if (index[word][time]) {
+          index[word][time] += 1
+        } else {
+          index[word][time] = 1
+        }
+      })
+      return index
+    }, {})
+  console.log('Writing files…')
+  fs.writeFile('./assets/queries.json', JSON.stringify(queries), 'utf8', e => {
+    if (e) throw e
+    console.log('Successfully wrote queries.json')
+  })
+  fs.writeFile('./assets/index.json', JSON.stringify(tokens), 'utf8', err => {
+    if (err) throw err
+    console.log('Successfully wrote index.json')
+  })
+  fs.writeFile('./assets/tweets.json', JSON.stringify(tweets), 'utf8', err => {
+    if (err) throw err
+    console.log('Successfully wrote tweets.json')
+  })
 }
 
 main()
