@@ -19,3 +19,20 @@ npm run rank
 ## ESLint
 
 In your editor, preferably [Atom](http://atom.io) or [Sublime Text 3](http://sublimetext.com), make sure to install a package for "eslint" in order to have your JavaScript validated by the rules defined in the `.eslintrc`
+
+## trec_eval
+TRECEVAL is a program to evaluate TREC results using the standard, NIST evaluation procedures.
+
+Download trec_eval script from [trec_eval](http://trec.nist.gov/trec_eval/)
+
+Using a unix based system, typing "make" in the source directory.
+If you wish the trec_eval binary to be placed in a standard location, alter
+the first line of Makefile appropriately.
+
+Compare your results with the expected results, from the relevance feedback file, available here [qrels](http://www.site.uottawa.ca/~diana/csi4107/A1_2016/Trec_microblog11-qrels.txt)
+
+In the source directory, the format for the command line is:    .\trec_eval trec_rel_file trec_top_file
+
+Where trec_eval is the executable name for the code, trec_rel_file is the qrels, trec_top_file is the results file.  (Remember, you may have to specify the path for the trec_rel_file (qrels) and the trec_top_file (results) in the command line when running trec_eval.)
+
+trec_eval compare results from the console are currently saved under trec_eval-results.txt
