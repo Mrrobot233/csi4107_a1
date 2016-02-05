@@ -12,6 +12,10 @@ const index =
 const tweets =
   JSON.parse(fs.readFileSync('./assets/tweets.json', 'utf8'))
 
+// Words by Tweet ID
+const wordsInTweets =
+  JSON.parse(fs.readFileSync('./assets/words_per_tweet.json', 'utf8'))
+
 const countWord = (index, word) => Object.keys(index[word])
     .reduce((count, key) => count + index[word][key], 0)
 
@@ -106,7 +110,9 @@ const search = ({ tokens: unfilteredTokens, num }) => {
           (documentIdfs[id]
             .reduce((sum, { idf: documentIdf, token: documentToken }) =>
               sum + documentIdf * weightedQueryIdfs[documentToken], 0)) /
-          (documentLengths[id] * lengthOfQuery)
+          (documentLengths[id] * lengthOfQuery) *
+          // Account for document length, 1% value
+          (.01 * (documentIdfs[id].length / wordsInTweets[id]) + .99)
         return cosSimilarities
       }, {})
   const sortedResults =
@@ -117,7 +123,7 @@ const search = ({ tokens: unfilteredTokens, num }) => {
         , queryId: num
         }
       ))
-      .sort((a, b) => a.score - b.score)
+      .sort((a, b) => b.score - a.score)
       .map((result, i) => Object.assign(result, { rank: i + 1 }))
   return sortedResults
 }
@@ -135,6 +141,6 @@ const writeTRECFile = results => {
 const totalResults =
   queries
     .reduce((list, query) =>
-      list.concat(search(query)), [])
+      list.concat(search(query).slice(0, 1000)), [])
 
 writeTRECFile(totalResults)

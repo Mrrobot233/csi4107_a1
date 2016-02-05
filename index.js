@@ -78,6 +78,11 @@ async function main () {
       })
       return index
     }, {})
+  const wordsInTweets =
+    filteredTweets.reduce((twitterWords, { time, tweet }) => {
+      twitterWords[time] = tweet.length
+      return twitterWords
+    }, {})
   console.log('Writing files…')
   fs.writeFile('./assets/queries.json', JSON.stringify(queries), 'utf8', e => {
     if (e) throw e
@@ -91,6 +96,11 @@ async function main () {
     if (err) throw err
     console.log('Successfully wrote tweets.json')
   })
+  fs.writeFile('./assets/words_per_tweet.json',
+    JSON.stringify(wordsInTweets), 'utf8', err => {
+      if (err) throw err
+      console.log('Successfully wrote words_per_tweet.json')
+    })
 }
 
 main()
