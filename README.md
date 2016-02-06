@@ -2,6 +2,22 @@
 
 The data is found in `assets/`
 
+## Team members
+
+Ted Morin - 6860630
+
+Sophie Le Page - 5992312
+
+## Work distribution
+
+Program was done through peer programming. Ted was the primary programmer. Sophie worked on trec_eval, commenting code, and documentation
+
+## Functionality
+
+## Explanation
+
+Explain the algorithms, data structures, and optimizations that you used in each of the three steps. How big was the vocabulary? Include a sample of 100 tokens from your vocabulary. Include the first 10 answers to queries 1 and 25. Discuss your final results.
+
 ## Get up and running
 
 ```
