@@ -18,6 +18,8 @@ To implement the IR system, we did peer programming outside of class and in clas
 
 Our IR system is written in JavaScript.
 
+Our system takes in the following files as inputs: queries, tweets, and stopwords, and outputs an index of vocabulary, and a results.TREC file.
+
 ## Get up and running
 
 ```
