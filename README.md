@@ -16,6 +16,8 @@ To implement the IR system, we did peer programming outside of class and in clas
 
 ## Functionality
 
+Our IR system is written in JavaScript.
+
 ## Get up and running
 
 ```
@@ -71,10 +73,40 @@ If a token is in the vocabulary, and the document id is already being pointed to
 
 If a token is in the vocabulary, and the document id is not being pointed to, add the document id and initialize word count to 1.
 
+Example structure of token hash-table:
+cat: {'29026473444646912': 1}, {'29645836442927104': 3},
+dog: {'3322264097810841': 4}, {'31791717313159168': 1}, {'29570360991023105': 2},
+etc..
+
+Where cat is a token, 29026473444646912 is the document id (tweettime) that the token appears in, and 1 is the word count of the token in document 29026473444646912.
+
+Our vocabulary holds 92234 tokens.
+
 ### Step 3 - Retrieval and ranking
 
 For ranking we used cosine similarity measure.
 
 ### First 10 answers to queries 1 and 25
+
+1 Q0 30260724248870912 1 0.9962500000000002 SofixaTed
+1 Q0 30198105513140224 2 0.9434586983328701 SofixaTed
+1 Q0 30167063326629888 3 0.8810010171480104 SofixaTed
+1 Q0 30016851715031040 4 0.8804376272089868 SofixaTed
+1 Q0 30275282464153600 5 0.8802404407303286 SofixaTed
+1 Q0 30016488928706560 6 0.8799446610123413 SofixaTed
+1 Q0 30236884051435520 7 0.8436187008999181 SofixaTed
+1 Q0 32158658863304705 8 0.842207967286373 SofixaTed
+1 Q0 30303184207478784 9 0.842207967286373 SofixaTed
+1 Q0 ﻿34952194402811904 10 0.842207967286373 SofixaTed
+25 Q0 31286354960715777 1 0.9929999999999999 SofixaTed
+25 Q0 31550836899323904 2 0.9924999999999998 SofixaTed
+25 Q0 31738694356434944 3 0.9923076923076922 SofixaTed
+25 Q0 32609015158542336 4 0.9919999999999999 SofixaTed
+25 Q0 31320463862931456 5 0.8952702391822849 SofixaTed
+25 Q0 32528974961713152 6 0.893904665297016 SofixaTed
+25 Q0 30093525102108674 7 0.8935535177265183 SofixaTed
+25 Q0 32685391781830656 8 0.8934676816537299 SofixaTed
+25 Q0 32541161675558912 9 0.8447905631011456 SofixaTed
+25 Q0 29974357501550592 10 0.7917468960398085 SofixaTed
 
 ### Discussion of our final results
