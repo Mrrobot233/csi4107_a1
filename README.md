@@ -57,7 +57,7 @@ trec_eval compare results from the console are currently saved under trec_eval-r
 
 ## Discussion
 
-We based our implementation of the IR system using steps in the assignment guidelines. The following is an explanation of the algorithms, data structures, and optimizations that we used in each of the three steps, the first 10 answers to queries 1 and 25, as well as a discussion of our results.
+We based our implementation of the IR system using steps in the assignment guidelines. The following is an explanation of the algorithms, data structures, and optimizations that we used in each of the three steps, as well as the first 10 answers to queries 1 and 25 and a discussion of our results.
 
 ### Step 1 - Preprocessing
 
@@ -80,7 +80,7 @@ cat: {'29026473444646912': 1}, {'29645836442927104': 3},
 dog: {'3322264097810841': 4}, {'31791717313159168': 1}, {'29570360991023105': 2},
 etc..
 
-Where cat is a token, 29026473444646912 is the document id (tweettime) that the token appears in, and 1 is the word count of the token in document 29026473444646912.
+Where cat is a token, 29026473444646912 is the document id (tweettime) that the token appears in, and 1 is the word count of the token in the document.
 
 Our vocabulary holds 92234 tokens.
 

@@ -16,26 +16,15 @@ const tweets =
 const wordsInTweets =
   JSON.parse(fs.readFileSync('./assets/words_per_tweet.json', 'utf8'))
 
-const countWord = (index, word) => Object.keys(index[word])
-    .reduce((count, key) => count + index[word][key], 0)
-
-const mostCommonVocabulary = () =>
-  Object.keys(index).sort((wordA, wordB) => {
-    const a = index[wordA]
-    const b = index[wordB]
-    const aCount =
-      Object.keys(a).reduce((count, key) => count + a[key], 0)
-    const bCount =
-        Object.keys(b).reduce((count, key) => count + b[key], 0)
-    return bCount - aCount
-  })
-
+//function to calculate inverse document frequency (idf) for a term
 const idf = (documentCount, relevantDocuments) =>
   Math.log2(documentCount / relevantDocuments)
 
+//From word, passes number of total documents and document frequency for word
 const wordToIdf = word =>
   idf(tweets.length, Object.keys(index[word]).length)
 
+//Array of { term: {tf-idf: tf * idf value of term in document, document: id} }
 const documentsByTerm = term => {
   const termIdf = wordToIdf(term)
   return Object.keys(index[term])
@@ -46,10 +35,14 @@ const documentsByTerm = term => {
     ))
 }
 
+//Function for calculating length of documents and queries
 const length = values => Math.sqrt(
     values.reduce((squaredSums, x) => squaredSums + Math.pow(x, 2), 0)
 )
 
+//Takes tokens from query, searches index for tokens
+//Creates a tf vector for query
+//Array of { tokens in query also in documents: tokens, freq of token in query}
 const search = ({ tokens: unfilteredTokens, num }) => {
   const tokens =
     unfilteredTokens.filter(token => index[token])
@@ -60,9 +53,11 @@ const search = ({ tokens: unfilteredTokens, num }) => {
           1
       return counts
     }, {})
+  //Calculates maximum frequency of term in query
   const maximumCount =
     Object.keys(queryCounts).reduce((maximum, current) =>
       maximum > queryCounts[current] ? maximum : queryCounts[current], 0)
+  //Reduces query terms to unique terms
   const uniqueTokens =
     Object.keys(
       tokens.reduce((list, token) => {
@@ -70,11 +65,13 @@ const search = ({ tokens: unfilteredTokens, num }) => {
         return list
       }, {})
     ).sort()
+  //Array of query terms and their idf values {query term: idf}
   const queryIdfs =
     uniqueTokens.reduce((idfs, token) => {
       idfs[token] = wordToIdf(token)
       return idfs
     }, {})
+  //Function to calculte tf-idf values for query terms divided by max freq
   const weightedQueryIdfs =
     uniqueTokens
       .reduce((weighted, token) => {

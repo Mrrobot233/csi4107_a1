@@ -35,6 +35,7 @@ async function main () {
       }))
     )
 
+//function for tokenization and stopword removal
   const filterSentence = sentence => sentence.trim()
       .replace(/[^a-zA-Z ]/g, '').toLowerCase()
       .split(' ')
@@ -78,6 +79,7 @@ async function main () {
       })
       return index
     }, {})
+  // Array of { document id (tweettime): num words }
   const wordsInTweets =
     filteredTweets.reduce((twitterWords, { time, tweet }) => {
       twitterWords[time] = tweet.length
