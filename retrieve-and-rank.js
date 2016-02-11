@@ -19,11 +19,9 @@ const wordsInTweets =
 //function to calculate inverse document frequency (idf) for a term
 const idf = (documentCount, relevantDocuments) =>
   Math.log2(documentCount / relevantDocuments)
-
-//From word, passes number of total documents and document frequency for word
+//Passes # of total documents and document frequency for a term to idf function
 const wordToIdf = word =>
   idf(tweets.length, Object.keys(index[word]).length)
-
 //Array of { term: {tf-idf: tf * idf value of term in document, document: id} }
 const documentsByTerm = term => {
   const termIdf = wordToIdf(term)
@@ -34,15 +32,12 @@ const documentsByTerm = term => {
       }
     ))
 }
-
-//Function for calculating length of documents and queries
+//Function to calculate length as part of cosine similarity measure
 const length = values => Math.sqrt(
     values.reduce((squaredSums, x) => squaredSums + Math.pow(x, 2), 0)
 )
-
-//Takes tokens from query, searches index for tokens
-//Creates a tf vector for query
-//Array of { tokens in query also in documents: tokens, freq of token in query}
+//Takes query as parameter and
+//Creates array of query terms in vocabulary and frequency of token in query
 const search = ({ tokens: unfilteredTokens, num }) => {
   const tokens =
     unfilteredTokens.filter(token => index[token])
@@ -71,16 +66,17 @@ const search = ({ tokens: unfilteredTokens, num }) => {
       idfs[token] = wordToIdf(token)
       return idfs
     }, {})
-  //Function to calculte tf-idf values for query terms divided by max freq
+  ///Array of query terms tf-idf values divided by max freq (query vector)
   const weightedQueryIdfs =
     uniqueTokens
       .reduce((weighted, token) => {
         weighted[token] = queryIdfs[token] * queryCounts[token] / maximumCount
         return weighted
       }, {})
+  //Calculates length of query for cosine similarity measure
   const lengthOfQuery = length(Object.keys(weightedQueryIdfs)
     .map(key => weightedQueryIdfs[key]))
-
+  //From matrix of documents-by-terms, remove documents without query terms
   const documentIdfs =
     uniqueTokens.reduce((idfs, token) => {
       documentsByTerm(token).forEach(({ idf, document }) => {
@@ -92,14 +88,14 @@ const search = ({ tokens: unfilteredTokens, num }) => {
       })
       return idfs
     }, {})
-
+  //Calculates length of document for cosine similarity measure
   const documentLengths =
     Object.keys(documentIdfs)
       .reduce((lengths, id) => {
         lengths[id] = length(documentIdfs[id].map(x => x.idf))
         return lengths
       }, {})
-
+  //Calculate similarity values for each document given a query
   const documentCosSimilarities =
     Object.keys(documentIdfs)
       .reduce((cosSimilarities, id) => {
@@ -112,6 +108,7 @@ const search = ({ tokens: unfilteredTokens, num }) => {
           (.01 * (documentIdfs[id].length / wordsInTweets[id]) + .99)
         return cosSimilarities
       }, {})
+  //Rank score of similarity values from greatest similarity to least
   const sortedResults =
     Object.keys(documentIdfs)
       .map(tweetId => (
@@ -124,7 +121,7 @@ const search = ({ tokens: unfilteredTokens, num }) => {
       .map((result, i) => Object.assign(result, { rank: i + 1 }))
   return sortedResults
 }
-
+//TREC format
 const writeTRECFile = results => {
   const TREC =
     results.reduce((toWrite, { tweetId, score, queryId, rank }) =>
@@ -134,10 +131,10 @@ const writeTRECFile = results => {
     console.info('Wrote ./results.TREC!')
   })
 }
-
+//Run IR system on set of test queries (first 1000 results)
 const totalResults =
   queries
     .reduce((list, query) =>
       list.concat(search(query).slice(0, 1000)), [])
-
+//Write information retrieval results to results.TREC file
 writeTRECFile(totalResults)
