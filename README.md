@@ -8,7 +8,7 @@ Sophie Le Page - 5992312
 
 ## Work distribution
 
-To implement the IR system, we did peer programming outside of class and in class. Ted was the primary programmer and chose the programming language to code in. Sophie worked out what algorithms, data structures, and optimizations to use, and commented the code. Both team members worked evaluating the IR system using the `trec_eval` script and on writing up documentation.
+To implement the IR system, we did peer programming outside of class and in class. Ted was the primary programmer and chose the programming language to code in. Sophie worked out what algorithms, data structures, and optimizations to use, and commented the code. Both team members worked on evaluating the IR system using the `trec_eval` script and on writing up documentation.
 
 ## Functionality
 
@@ -70,7 +70,7 @@ This `filterSentence()` function is also used on all queries.
 
 ### Step 2 - Indexing
 
-Next we built our vocabulary using a hash table. The hash table uses unique tokens (from the filtered documents) as an index, and then each token points to an array holding the document id (`tweettime`) that the token is in as well as the frequency of the token in the document. The following logic was used to build our indexed vocabulary:
+Next we built our vocabulary using a hash table. The hash table uses unique tokens (from the filtered documents) as an index, and then each token points to an array holding the document id (`tweettime`) that the token is in as well as the frequency of the token in the document.
 
 Example structure of our index:
 
