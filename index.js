@@ -79,6 +79,7 @@ async function main () {
       })
       return index
     }, {})
+  console.info(`Vocabulary has ${Object.keys(tokens).length} words`)
   // Array of { document id (tweettime): num words }
   const wordsInTweets =
     filteredTweets.reduce((twitterWords, { time, tweet }) => {

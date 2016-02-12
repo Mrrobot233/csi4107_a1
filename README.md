@@ -1,24 +1,24 @@
 # CSI4107, Winter 2016 - Assignment 1
 
-The following is our implementation of an Information Retrieval (IR) system based for a collection of Twitter messages, in which where we're submitting the top 1000 results of our system on a set of 49 test queries.
-
-All data is found in `assets/`
-
 ## Team members
 
-Ted Morin - 6860630
+Theodore Morin - 6860630
 
 Sophie Le Page - 5992312
 
 ## Work distribution
 
-To implement the IR system, we did peer programming outside of class and in class. Ted was the primary programmer and chose the programming language to code in. Sophie worked out what algorithms, data structures, and optimizations to use, and commented the code. Both team members worked on writing up documentation.
+To implement the IR system, we did peer programming outside of class and in class. Ted was the primary programmer and chose the programming language to code in. Sophie worked out what algorithms, data structures, and optimizations to use, and commented the code. Both team members worked evaluating the IR system using the trec_eval script and on writing up documentation.
 
 ## Functionality
 
+The following is our implementation of an Information Retrieval (IR) system based for a collection of Twitter messages, in which we're submitting the top 1000 results of our system on a set of 49 test queries.
+
 Our IR system is written in JavaScript.
 
-Our system takes in the following files as inputs: queries, tweets, and stopwords, and outputs an index of vocabulary, and a results.TREC file.
+Our system takes in the following files as inputs: queries.txt, tweets.txt, and stopwords.txt (all of which were provided to us), and outputs an index of vocabulary (index.json), and a retrieval and ranking results file (results.TREC).
+
+Note all data is found in `assets/`
 
 ## Get up and running
 
@@ -39,6 +39,7 @@ npm run rank
 In your editor, preferably [Atom](http://atom.io) or [Sublime Text 3](http://sublimetext.com), make sure to install a package for "eslint" in order to have your JavaScript validated by the rules defined in the `.eslintrc`
 
 ### trec_eval
+
 TRECEVAL is a program to evaluate TREC results using the standard, NIST evaluation procedures.
 
 Download trec_eval script from [trec_eval](http://trec.nist.gov/trec_eval/)
@@ -61,21 +62,15 @@ We based our implementation of the IR system using steps in the assignment guide
 
 ### Step 1 - Preprocessing
 
-To process the documents (Twitter messsages), we wrote a function called filterSentence() that takes a document and outputs an array of tokens. The filter function first uses the trim() method to remove whitespaces, then replaces anything the document that is not a letter with blank (''), then uses the toLowerCase() method to replace all upper case letters to lowercase, then uses the split method() to split the document on spaces (' ') to create tokens, and finally compares and removes tokens to the list of stop words provided.
+To process the documents (Twitter messsages), we wrote a function called filterSentence() that takes a document and outputs an array of tokens. The filter function first uses the trim() method to remove whitespaces, replaces anything that is not a letter with blank (''), uses the toLowerCase() method to replace all uppercase letters to lowercase, uses the split method() to split the document on spaces (' ') to create tokens, and finally compares and removes tokens to the list of stop words provided.
 
-We also used this filterSentence() function on all queries.
+This filterSentence() function is also used on all queries.
 
 ### Step 2 - Indexing
 
-Next we built our vocabulary using a hash table called tokens. The hash table uses unique tokens (from the filtered documents) as an index , and then each token points to a structured array holding the document id (tweettime) that the token is used in as well as the word count of the token. The following logic was used to build our indexed vocabulary:
+Next we built our vocabulary using a hash table. The hash table uses unique tokens (from the filtered documents) as an index, and then each token points to an array holding the document id (tweettime) that the token is in as well as the frequency of the token in the document. The following logic was used to build our indexed vocabulary:
 
-If a token is not in the vocabulary, add the token to the vocabulary. The new token will be used as a new index pointing to a structure holding the document id (tweettime) and the word count of token, in which the word count is initialized to 1.
-
-If a token is in the vocabulary, and the document id is already being pointed to, increase word count by 1.
-
-If a token is in the vocabulary, and the document id is not being pointed to, add the document id and initialize word count to 1.
-
-Example structure of token hash-table:
+Example structure of our index:
 cat: {'29026473444646912': 1}, {'29645836442927104': 3},
 dog: {'3322264097810841': 4}, {'31791717313159168': 1}, {'29570360991023105': 2},
 etc..
@@ -86,9 +81,11 @@ Our vocabulary holds 92234 tokens.
 
 ### Step 3 - Retrieval and ranking
 
-For ranking we used cosine similarity measure.
+Using our index, we found the set of documents that contain at least one of the query words and computed the similarity scores between the query and each document using cosine similarity measure. We also accounted for document length with 1% value. We ranked the documents in decreasing order of similarity scores and only kept the top 1000 results.
 
 ### First 10 answers to queries 1 and 25
+
+#### Query 1
 
 1 Q0 30260724248870912 1 0.9962500000000002 SofixaTed
 1 Q0 30198105513140224 2 0.9434586983328701 SofixaTed
@@ -100,6 +97,9 @@ For ranking we used cosine similarity measure.
 1 Q0 32158658863304705 8 0.842207967286373 SofixaTed
 1 Q0 30303184207478784 9 0.842207967286373 SofixaTed
 1 Q0 ﻿34952194402811904 10 0.842207967286373 SofixaTed
+
+##### Query 25
+
 25 Q0 31286354960715777 1 0.9929999999999999 SofixaTed
 25 Q0 31550836899323904 2 0.9924999999999998 SofixaTed
 25 Q0 31738694356434944 3 0.9923076923076922 SofixaTed
@@ -112,3 +112,36 @@ For ranking we used cosine similarity measure.
 25 Q0 29974357501550592 10 0.7917468960398085 SofixaTed
 
 ### Discussion of our final results
+
+The following is the evaluation of our system using trec_eval script by comparing our results (results.TREC) with the expected results from the provided relevance feedback file (qrels.txt).
+
+runid                     all    SofixaTed
+num_q                     all    49
+num_ret                   all    38260
+num_rel                   all    2640
+num_rel_ret               all    2161
+map                       all    0.2755
+gm_map                    all    0.2008
+Rprec                     all    0.3072
+bpref                     all    0.2839
+recip_rank                all    0.6363
+iprec_at_recall_0.00      all    0.7016
+iprec_at_recall_0.10      all    0.5212
+iprec_at_recall_0.20      all    0.4395
+iprec_at_recall_0.30      all    0.3871
+iprec_at_recall_0.40      all    0.3523
+iprec_at_recall_0.50      all    0.3070
+iprec_at_recall_0.60      all    0.2262
+iprec_at_recall_0.70      all    0.1879
+iprec_at_recall_0.80      all    0.1337
+iprec_at_recall_0.90      all    0.0777
+iprec_at_recall_1.00      all    0.0261
+P_5                       all    0.4082
+P_10                      all    0.3592
+P_15                      all    0.3429
+P_20                      all    0.3235
+P_30                      all    0.3014
+P_100                     all    0.1884
+P_200                     all    0.1376
+P_500                     all    0.0776
+P_1000                    all    0.0441
