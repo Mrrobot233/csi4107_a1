@@ -82,7 +82,18 @@ etc..
 
 Where `cat` is a token, `29026473444646912` is the document id (`tweettime`) that the token appears in, and 1 is the word count of the token in the document.
 
-Our vocabulary holds 92234 tokens.
+Our vocabulary holds 92234 tokens, noting that many tokens may not be useful
+as they are one-off words or spelling mistakes.
+
+The format of the vocabulary is:
+
+```
+{
+  "word1": { "tweetid1": 2, "tweetid2": 1 }
+}
+```
+
+In the figure above, "word1" represents the words in the vocabulary, and the "tweetid1 and 2" are tweet IDs, with their values being the number of times the word is repeated in the tweet.
 
 ### Step 3 - Retrieval and ranking
 
@@ -154,3 +165,126 @@ P_1000                    all    0.0441
 ```
 
 Here, we mostly want to look at "map" and "P_5" as the canaries for the value of our results. Particularly, map represents an overall performance of our searching. It's only 27.5%, but considering our limited data (42,000 tweets, short documents), we'd think this is pretty good. Without our additional weighting on the document length, we were able to get the map value slightly higher (28%), but the "P_5" went down, and we feel it's more valuable to get the most relevant results correct than the map for less relevant documents.
+
+We felt overall pretty good about our results, knowing that our slight optimization based on document length increased the P_5 value. Our searches seemed quite relevant when we manually verified the results.
+
+## Appendix: Vocabulary Sample
+
+Here's a sample vocabulary of 2 words with Tweet counts:
+
+```json
+{
+  "isare": {
+    "34952186328784896": 1
+  },
+  "rethink": {
+    "34952041415581696": 2,
+    "30731900456800257": 1
+  }
+}
+```
+
+Here are 100 words from our vocabulary. Note that we ignore case in our queries:
+
+```
+"bbc",
+"world",
+"service",
+"savage",
+"cuts",
+"lot",
+"people",
+"fun",
+"question",
+"isare",
+"rethink",
+"group",
+"positive",
+"outlook",
+"technology",
+"staffing",
+"specialist",
+"expects",
+"revenues",
+"marg",
+"zombie",
+"fund",
+"manager",
+"phoenix",
+"appoints",
+"ceo",
+"buys",
+"funds",
+"closed",
+"business",
+"latest",
+"top",
+"releases",
+"cdt",
+"presents",
+"alice",
+"wonderland",
+"catonsville",
+"dinner",
+"posted",
+"funny",
+"latin",
+"word",
+"words",
+"poli",
+"means",
+"tics",
+"bloodsuking",
+"creatures",
+"true",
+"love",
+"form",
+"amnesia",
+"forget",
+"exist",
+"slt",
+"charles",
+"taylor",
+"lawyer",
+"storms",
+"war",
+"crimes",
+"trial",
+"feel",
+"pretty",
+"happy",
+"loving",
+"life",
+"yay",
+"favorite",
+"episodes",
+"boy",
+"meets",
+"skysixtysix",
+"infobandung",
+"javatourstravel",
+"butuhkan",
+"staff",
+"kantor",
+"dan",
+"market",
+"cwe",
+"cwo",
+"pend",
+"min",
+"movie",
+"spike",
+"mikes",
+"cutting",
+"edge",
+"classics",
+"apogee",
+"expands",
+"northeast",
+"southwest",
+"serve",
+"energy",
+"utilities",
+"atlanta",
+"feb",
+```
